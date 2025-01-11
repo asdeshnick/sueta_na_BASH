@@ -6,10 +6,11 @@ watch_file() {
     local last_users=""
     
     echo "Начинаю следить за файлом: $file"
-    echo "Нажмите Ctrl+C для остановки"
+    echo "Нажмите Ctrl+C для остановки" 
     
     while true; do
         current_modified=$(stat -f %m "$file" 2>/dev/null || stat -c %Y "$file")
+        current_users=$(lsof "$file" 2>/dev/null | awk 'NR>1 {print $3}' | sort -u | tr '\n' ',' | sed 's/,$//')
         
         if [ "$last_users" != "$current_users" ]; then
             if [ -z "$current_users" ]; then
